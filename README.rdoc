@@ -1,0 +1,46 @@
+=Paperclip-Cassandra
+
+This is a Cassandra storage backend for Paperclip. It supports an arbitrary number
+of styles and store the content-type, size, and creation date with the image data
+so that the assets can be delivered right out of cassandra without hitting whatever
+database is storing the rest of your model.
+
+==Quick Start
+
+In your model (in this example, 'connection' is a Cassandra connection from
+the cassandra gem):
+
+  class Image < ActiveRecord::Base
+		has_attached_file :image,
+								:styles => {
+									:large => "900x900>",
+									:medium => "300x300>",
+									:small => "130x110>",
+									:thumb => "64x64>",
+								},
+								:storage => :cassandra,
+								:column_family => :PaperclipAttachments,
+								:key_prefix => 'I',
+								:connection => Cassandra.new(*args),
+								:path => ":style",
+								:url => "/:style/:param.:extension"
+  end
+
+Example SuperColumn Family:
+
+	<ColumnFamily
+		Name="PaperclipAttachments"
+		ColumnType="Super"
+		CompareWith="BytesType"
+		CompareSubcolumnsWith="BytesType"
+		Comment="Paperclip Attachments"
+	/>
+
+
+==Notes
+
+You can put multiple attachments in the same column family because there is a
+key prefix that defaults to the class name but can be overridden to make
+shorter keys for storage savings.
+
+'param' has been added as an interpolation for use with things like permalinks.
