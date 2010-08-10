@@ -11,30 +11,30 @@ In your model (in this example, 'connection' is a Cassandra connection from
 the cassandra gem):
 
   class Image < ActiveRecord::Base
-		has_attached_file :image,
-								:styles => {
-									:large => "900x900>",
-									:medium => "300x300>",
-									:small => "130x110>",
-									:thumb => "64x64>",
-								},
-								:storage => :cassandra,
-								:column_family => :PaperclipAttachments,
-								:key_prefix => 'I',
-								:connection => Cassandra.new(*args),
-								:path => ":style",
-								:url => "/:style/:param.:extension"
+    has_attached_file :image,
+      :styles => {
+        :large => "900x900>",
+        :medium => "300x300>",
+        :small => "130x110>",
+        :thumb => "64x64>",
+      },
+      :storage => :cassandra,
+      :column_family => :PaperclipAttachments,
+      :key_prefix => 'I',
+      :connection => Cassandra.new(*args),
+      :path => ":style",
+      :url => "/:style/:param.:extension"
   end
 
 Example SuperColumn Family:
 
-	<ColumnFamily
-		Name="PaperclipAttachments"
-		ColumnType="Super"
-		CompareWith="BytesType"
-		CompareSubcolumnsWith="BytesType"
-		Comment="Paperclip Attachments"
-	/>
+  <ColumnFamily
+    Name="PaperclipAttachments"
+    ColumnType="Super"
+    CompareWith="BytesType"
+    CompareSubcolumnsWith="BytesType"
+    Comment="Paperclip Attachments"
+  />
 
 
 ==Notes
